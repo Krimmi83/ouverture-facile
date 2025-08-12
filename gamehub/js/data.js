@@ -1,36 +1,99 @@
 
-/** @typedef {{id:number, username:string, wins:number, losses:number, email:string}} Player */
-const KEY='gamehub_users_v1';
-function loadUsers(){ try{ return JSON.parse(localStorage.getItem(KEY))||[] }catch{ return [] } }
-function saveUsers(list){ localStorage.setItem(KEY, JSON.stringify(list)); }
-function uid(list){ return (list.reduce((m,p)=>Math.max(m,p.id||0),0)+1); }
-// Seed first time
-if(!localStorage.getItem(KEY)){
-  saveUsers([
-    { id: 1, username: 'Nova',    wins: 18, losses: 5,  email: 'nova@example.com' },
-    { id: 2, username: 'Kitsune', wins: 12, losses: 8,  email: 'kitsune@example.com' },
-    { id: 3, username: 'Atlas',   wins: 22, losses: 9,  email: 'atlas@example.com' },
-    { id: 4, username: 'Pixel',   wins: 9,  losses: 3,  email: 'pixel@example.com' },
-    { id: 5, username: 'Rogue',   wins: 7,  losses: 10, email: 'rogue@example.com' }
-  ]);
+/** @typedef {{wins:number, losses:number}} WL */
+/** @typedef {{difficulty:string, score:number}} Demineur */
+/** @typedef {{kills:number, deaths:number}} KD */
+/** @typedef {{id:number, username:string, email:string, games:{smash:WL, mariokart:WL, demineur:Demineur, minecraft:KD}} Player */
+
+const KEY = 'gamehub_users_v2';
+const LEGACY_KEY = 'gamehub_users_v1';
+
+function defaultGames() {
+  return {
+    smash: { wins: 0, losses: 0 },
+    mariokart: { wins: 0, losses: 0 },
+    demineur: { difficulty: 'Beginner', score: 0 },
+    minecraft: { kills: 0, deaths: 0 }
+  };
 }
-// Facade (local only)
+
+function migrateLegacyIfNeeded() {
+  const v2 = localStorage.getItem(KEY);
+  if (v2) return;
+  const legacy = localStorage.getItem(LEGACY_KEY);
+  if (legacy) {
+    try {
+      const arr = JSON.parse(legacy) || [];
+      const converted = arr.map(p => {
+        const g = defaultGames();
+        if (typeof p.wins === 'number' || typeof p.losses === 'number') {
+          g.smash.wins = p.wins|0;
+          g.smash.losses = p.losses|0;
+        }
+        return { id: p.id, username: p.username, email: p.email || '', games: g };
+      });
+      localStorage.setItem(KEY, JSON.stringify(converted));
+      return;
+    } catch {}
+  }
+  const seed = [
+    { id: 1, username: 'Nova',     email: 'nova@example.com',     games: { smash:{wins:18,losses:5},   mariokart:{wins:9,losses:7},   demineur:{difficulty:'Expert',score:420},      minecraft:{kills:34,deaths:11} } },
+    { id: 2, username: 'Kitsune',  email: 'kitsune@example.com',  games: { smash:{wins:12,losses:8},   mariokart:{wins:15,losses:12}, demineur:{difficulty:'Intermediate',score:260}, minecraft:{kills:21,deaths:19} } },
+    { id: 3, username: 'Atlas',    email: 'atlas@example.com',    games: { smash:{wins:22,losses:9},   mariokart:{wins:7,losses:5},   demineur:{difficulty:'Beginner',score:180},    minecraft:{kills:56,deaths:22} } },
+    { id: 4, username: 'Pixel',    email: 'pixel@example.com',    games: { smash:{wins:9,losses:3},    mariokart:{wins:3,losses:6},   demineur:{difficulty:'Intermediate',score:205},minecraft:{kills:14,deaths:7} } },
+    { id: 5, username: 'Rogue',    email: 'rogue@example.com',    games: { smash:{wins:7,losses:10},   mariokart:{wins:11,losses:14}, demineur:{difficulty:'Expert',score:380},       minecraft:{kills:28,deaths:33} } }
+  ];
+  localStorage.setItem(KEY, JSON.stringify(seed));
+}
+
+function loadUsers() {
+  migrateLegacyIfNeeded();
+  try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; }
+}
+function saveUsers(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
+function uid(list) { return (list.reduce((m,p)=>Math.max(m, p.id||0), 0) + 1); }
+
 const api = {
-  async listPlayers(){ return loadUsers(); },
-  async upsertPlayer(p){
-    const list=loadUsers(); let id=p.id||uid(list);
-    const i=list.findIndex(x=>x.id===id);
-    const rec={ id, username:p.username, wins:p.wins|0, losses:p.losses|0, email:p.email };
-    if(i>=0) list[i]=rec; else list.push(rec);
-    saveUsers(list); return rec;
+  async listPlayers() { return loadUsers(); },
+  async upsertPlayer(p) {
+    const list = loadUsers();
+    let id = p.id || uid(list);
+    const i = list.findIndex(x => x.id === id);
+    const current = i >= 0 ? list[i] : { id, username:'', email:'', games: defaultGames() };
+    const merged = {
+      id,
+      username: p.username ?? current.username,
+      email: p.email ?? current.email,
+      games: {
+        smash: { wins: p.games?.smash?.wins ?? current.games.smash.wins, losses: p.games?.smash?.losses ?? current.games.smash.losses },
+        mariokart: { wins: p.games?.mariokart?.wins ?? current.games.mariokart.wins, losses: p.games?.mariokart?.losses ?? current.games.mariokart.losses },
+        demineur: { difficulty: p.games?.demineur?.difficulty ?? current.games.demineur.difficulty, score: p.games?.demineur?.score ?? current.games.demineur.score },
+        minecraft: { kills: p.games?.minecraft?.kills ?? current.games.minecraft.kills, deaths: p.games?.minecraft?.deaths ?? current.games.minecraft.deaths }
+      }
+    };
+    if (i >= 0) list[i] = merged; else list.push(merged);
+    saveUsers(list); return merged;
   },
-  async deletePlayer(id){ const list=loadUsers().filter(x=>x.id!==id); saveUsers(list); return {ok:true}; },
-  async addWin(id){ const list=loadUsers().map(p=>p.id===id?{...p,wins:p.wins+1}:p); saveUsers(list); return {ok:true}; },
-  async addLoss(id){ const list=loadUsers().map(p=>p.id===id?{...p,losses:p.losses+1}:p); saveUsers(list); return {ok:true}; },
-  async importJson(list){ saveUsers(list); return {ok:true}; },
-  async exportJson(){ return loadUsers(); }
+  async deletePlayer(id) { const list = loadUsers().filter(x => x.id !== id); saveUsers(list); return { ok: true }; },
+  async addWin(id, game) { const list = loadUsers().map(p => p.id===id ? (p.games?.[game]?.wins!==undefined ? (p.games[game].wins++, p) : p) : p); saveUsers(list); return { ok: true }; },
+  async addLoss(id, game) { const list = loadUsers().map(p => p.id===id ? (p.games?.[game]?.losses!==undefined ? (p.games[game].losses++, p) : p) : p); saveUsers(list); return { ok: true }; },
+  async addKill(id) { const l = loadUsers().map(p => p.id===id ? (p.games.minecraft.kills++, p) : p); saveUsers(l); return {ok:true}; },
+  async addDeath(id) { const l = loadUsers().map(p => p.id===id ? (p.games.minecraft.deaths++, p) : p); saveUsers(l); return {ok:true}; },
+  async importJson(list) {
+    const norm = (list||[]).map(p => {
+      if (p.games) return p;
+      const g = defaultGames();
+      if (typeof p.wins === 'number' || typeof p.losses === 'number') {
+        g.smash.wins = p.wins|0; g.smash.losses = p.losses|0;
+      }
+      return { id: p.id, username: p.username, email: p.email||'', games: g };
+    });
+    saveUsers(norm); return { ok: true };
+  },
+  async exportJson() { return loadUsers(); }
 };
-// Utils
+
 const fmtPercent = n => isNaN(n)?'-':(n*100).toFixed(0)+'%';
-const winRate = p => { const t=p.wins+p.losses; return t?(p.wins/t):0; };
-function escapeHtml(s){ return String(s).replace(/[&<>\"]/g,''); }
+const winRate = wl => { const t=(wl?.wins|0)+(wl?.losses|0); return t?((wl.wins|0)/t):0; };
+const kdRatio = kd => { const d=(kd?.deaths|0)||1; return (kd?.kills|0)/d; };
+const diffRank = d => ({'Beginner':1,'Intermediate':2,'Expert':3}[d]||0);
+function escapeHtml(s){ return String(s??'').replace(/[&<>"]/g,''); }

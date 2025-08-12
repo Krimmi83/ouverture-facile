@@ -1,10 +1,7 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Game Hub — Home</title>
-  <link rel="stylesheet" href="assets/style.css" />
-</head>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Game Hub — Home</title><link rel="stylesheet" href="assets/style.css"/></head>
 <body>
 
   <header>
@@ -15,36 +12,28 @@
         <a class="tab" href="leaderboard.html">Leaderboard</a>
         <a class="tab" href="players.html">The players</a>
         <a class="tab" href="about.html">About</a>
-        <button id="adminToggle" class="btn" title="Admin lock/unlock">🔒 Admin</button>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    
-<section class="hero card">
-  <div>
-    <h1>Welcome to your mini game portal</h1>
-    <p>Lecture seule par défaut. Cliquez sur <b>🔒 Admin</b> pour déverrouiller l'édition avec un PIN.</p>
-    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
-      <a class="cta primary" href="leaderboard.html">View Leaderboard →</a>
-      <a class="cta" href="players.html">Manage Players</a>
-    </div>
+
+<section class="card">
+  <h1>Welcome to your multi-game hub</h1>
+  <p class="muted">Now supports stats per game: <b>Smash</b>, <b>Mario Kart</b>, <b>Démineur</b>, <b>Minecraft</b>.</p>
+  <div class="toolbar">
+    <a class="btn" href="leaderboard.html">Leaderboard</a>
+    <a class="btn" href="players.html">Manage Players</a>
   </div>
   <div class="grid">
-    <div class="card"><h3>Local-first</h3><div class="muted">Data saved in <b>localStorage</b>.</div></div>
-    <div class="card"><h3>Backup</h3><div class="muted">Export/Import JSON + sauvegarde dans un dossier.</div></div>
-    <div class="card"><h3>Admin</h3><div class="muted">PIN hash côté client (barrière légère).</div></div>
+    <div class="card"><h3>Local-first</h3><div class="muted">All data saved in localStorage.</div></div>
+    <div class="card"><h3>Import/Export</h3><div class="muted">Backup and restore JSON easily.</div></div>
+    <div class="card"><h3>Migrations</h3><div class="muted">Old single-game data auto-migrates to Smash.</div></div>
   </div>
 </section>
 
   </main>
-  <footer>
-    <div class="container">Built with ❤️ — no frameworks, just modern HTML + JS. <span id="adminStatus" class="admin-badge" style="display:none">Admin</span></div>
-  </footer>
-  <script>window.ADMIN_PIN_SHA256="a1fb4e703a9ef1fa4936801721ff285a97ac85330856674412e054892afe6972";</script>
-  <script src="js/auth.js"></script>
+  <footer>Built with ❤️ — no frameworks.</footer>
   <script src="js/data.js"></script>
 
-</body>
-</html>
+</body></html>

@@ -1,10 +1,7 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Game Hub — About</title>
-  <link rel="stylesheet" href="assets/style.css" />
-</head>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Game Hub — About</title><link rel="stylesheet" href="assets/style.css"/></head>
 <body>
 
   <header>
@@ -15,26 +12,31 @@
         <a class="tab" href="leaderboard.html">Leaderboard</a>
         <a class="tab" href="players.html">The players</a>
         <a class="tab active" href="about.html">About</a>
-        <button id="adminToggle" class="btn" title="Admin lock/unlock">🔒 Admin</button>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    
+
 <section class="card">
   <h2>About</h2>
-  <p class="muted">Static version with <b>read-only by default</b> + <b>Admin unlock by PIN</b>. PIN stored as SHA-256 hash; this is a light barrier (DevTools can always override in a static app).</p>
-  <p class="muted">To change the PIN, edit <code>js/auth.js</code> (constant <code>ADMIN_PIN_SHA256</code>).</p>
+  <p class="muted">Static-only, multi-game edition. Data model per player:</p>
+  <pre class="muted">
+{
+  id, username, email,
+  games: {
+    smash: { wins, losses },
+    mariokart: { wins, losses },
+    demineur: { difficulty, score },
+    minecraft: { kills, deaths }
+  }
+}
+  </pre>
+  <p class="muted">Legacy data (single wins/losses) auto-migrates to <b>Smash</b>.</p>
 </section>
 
   </main>
-  <footer>
-    <div class="container">Built with ❤️ — no frameworks, just modern HTML + JS. <span id="adminStatus" class="admin-badge" style="display:none">Admin</span></div>
-  </footer>
-  <script>window.ADMIN_PIN_SHA256="a1fb4e703a9ef1fa4936801721ff285a97ac85330856674412e054892afe6972";</script>
-  <script src="js/auth.js"></script>
+  <footer>Built with ❤️ — no frameworks.</footer>
   <script src="js/data.js"></script>
 
-</body>
-</html>
+</body></html>

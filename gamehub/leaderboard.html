@@ -12,6 +12,8 @@
         <a class="tab active" href="leaderboard.html">Leaderboard</a>
         <a class="tab" href="players.html">The players</a>
         <a class="tab" href="about.html">About</a>
+        <span id="adminBadge" class="badge gray" style="margin-left:auto;">Admin: locked</span>
+        <button id="adminBtn" class="btn">Admin</button>
       </nav>
     </div>
   </header>
@@ -19,22 +21,18 @@
   <main class="container">
 
 <section class="card">
-  <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-    <h2 style="margin:0">Leaderboard</h2>
-    <div class="toolbar">
-      <label class="muted">Game</label>
-      <select id="lbGame">
-        <option value="smash">Smash</option>
-        <option value="mariokart">Mario Kart</option>
-        <option value="demineur">Démineur</option>
-        <option value="minecraft">Minecraft</option>
-      </select>
-      <label class="muted">Sort by</label>
-      <select id="lbSort"></select>
-      <button class="btn" id="lbExport">Export JSON</button>
-      <label class="btn warn" for="lbImportFile">Import JSON</label>
-      <input id="lbImportFile" type="file" accept="application/json" style="display:none"/>
-    </div>
+  <div class="toolbar">
+    <nav class="tabs" id="lbTabs">
+      <button class="tab small active" data-game="smash">Smash</button>
+      <button class="tab small" data-game="mariokart">Mario Kart</button>
+      <button class="tab small" data-game="demineur">Démineur</button>
+      <button class="tab small" data-game="minecraft">Minecraft</button>
+    </nav>
+    <label class="muted">Sort by</label>
+    <select id="lbSort"></select>
+    <button class="btn" id="lbExport">Export JSON</button>
+    <label class="btn warn" id="lbImportLabel" data-admin-only for="lbImportFile">Import JSON</label>
+    <input id="lbImportFile" type="file" accept="application/json" style="display:none"/>
   </div>
   <div style="overflow:auto;">
     <table id="lbTable">

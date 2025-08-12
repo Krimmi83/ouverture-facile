@@ -12,6 +12,8 @@
         <a class="tab" href="leaderboard.html">Leaderboard</a>
         <a class="tab" href="players.html">The players</a>
         <a class="tab active" href="about.html">About</a>
+        <span id="adminBadge" class="badge gray" style="margin-left:auto;">Admin: locked</span>
+        <button id="adminBtn" class="btn">Admin</button>
       </nav>
     </div>
   </header>
@@ -20,19 +22,7 @@
 
 <section class="card">
   <h2>About</h2>
-  <p class="muted">Static-only, multi-game edition. Data model per player:</p>
-  <pre class="muted">
-{
-  id, username, email,
-  games: {
-    smash: { wins, losses },
-    mariokart: { wins, losses },
-    demineur: { difficulty, score },
-    minecraft: { kills, deaths }
-  }
-}
-  </pre>
-  <p class="muted">Legacy data (single wins/losses) auto-migrates to <b>Smash</b>.</p>
+  <p class="muted">Static-only, multi-game edition, with per-game tabs and an Admin PIN lock (local only).</p>
 </section>
 
   </main>

@@ -6,6 +6,8 @@
 
 const KEY = 'gamehub_users_v2';
 const LEGACY_KEY = 'gamehub_users_v1';
+const ADMIN_PIN_KEY = 'gamehub_admin_pin';
+const ADMIN_MODE_KEY = 'gamehub_admin_mode';
 
 function defaultGames() {
   return {
@@ -18,7 +20,7 @@ function defaultGames() {
 
 function migrateLegacyIfNeeded() {
   const v2 = localStorage.getItem(KEY);
-  if (v2) return;
+  if (v2) return; // already on v2
   const legacy = localStorage.getItem(LEGACY_KEY);
   if (legacy) {
     try {
@@ -52,9 +54,31 @@ function loadUsers() {
 function saveUsers(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
 function uid(list) { return (list.reduce((m,p)=>Math.max(m, p.id||0), 0) + 1); }
 
+// ---- Admin helpers (local only; obfuscation minimal) ----
+function isAdmin(){ return localStorage.getItem(ADMIN_MODE_KEY) === '1'; }
+function setAdmin(on){ localStorage.setItem(ADMIN_MODE_KEY, on?'1':'0'); }
+
+async function requestAdmin(){
+  if (isAdmin()) { setAdmin(false); return true; }
+  let pin = localStorage.getItem(ADMIN_PIN_KEY);
+  if (!pin) {
+    const newPin = prompt('Définis un PIN admin (4–12 caractères) :');
+    if (!newPin || newPin.length < 4) return false;
+    localStorage.setItem(ADMIN_PIN_KEY, newPin);
+    pin = newPin;
+    alert('PIN enregistré. Ne l\'oublie pas !');
+  }
+  const entry = prompt('Entre le PIN admin :');
+  if (entry === pin) { setAdmin(true); return true; }
+  alert('PIN incorrect.');
+  return false;
+}
+
+// ---- API facade (local only) ----
 const api = {
   async listPlayers() { return loadUsers(); },
   async upsertPlayer(p) {
+    if (!isAdmin()) throw new Error('Admin required');
     const list = loadUsers();
     let id = p.id || uid(list);
     const i = list.findIndex(x => x.id === id);
@@ -71,14 +95,27 @@ const api = {
       }
     };
     if (i >= 0) list[i] = merged; else list.push(merged);
-    saveUsers(list); return merged;
+    saveUsers(list);
+    return merged;
   },
-  async deletePlayer(id) { const list = loadUsers().filter(x => x.id !== id); saveUsers(list); return { ok: true }; },
-  async addWin(id, game) { const list = loadUsers().map(p => p.id===id ? (p.games?.[game]?.wins!==undefined ? (p.games[game].wins++, p) : p) : p); saveUsers(list); return { ok: true }; },
-  async addLoss(id, game) { const list = loadUsers().map(p => p.id===id ? (p.games?.[game]?.losses!==undefined ? (p.games[game].losses++, p) : p) : p); saveUsers(list); return { ok: true }; },
-  async addKill(id) { const l = loadUsers().map(p => p.id===id ? (p.games.minecraft.kills++, p) : p); saveUsers(l); return {ok:true}; },
-  async addDeath(id) { const l = loadUsers().map(p => p.id===id ? (p.games.minecraft.deaths++, p) : p); saveUsers(l); return {ok:true}; },
+  async deletePlayer(id) {
+    if (!isAdmin()) throw new Error('Admin required');
+    const list = loadUsers().filter(x => x.id !== id); saveUsers(list); return { ok: true };
+  },
+  async addWin(id, game) {
+    if (!isAdmin()) throw new Error('Admin required');
+    const list = loadUsers().map(p => p.id === id ? (p.games?.[game]?.wins !== undefined ? (p.games[game].wins++, p) : p) : p);
+    saveUsers(list); return { ok: true };
+  },
+  async addLoss(id, game) {
+    if (!isAdmin()) throw new Error('Admin required');
+    const list = loadUsers().map(p => p.id === id ? (p.games?.[game]?.losses !== undefined ? (p.games[game].losses++, p) : p) : p);
+    saveUsers(list); return { ok: true };
+  },
+  async addKill(id) { if (!isAdmin()) throw new Error('Admin required'); const l = loadUsers().map(p => p.id===id ? (p.games.minecraft.kills++, p) : p); saveUsers(l); return {ok:true}; },
+  async addDeath(id) { if (!isAdmin()) throw new Error('Admin required'); const l = loadUsers().map(p => p.id===id ? (p.games.minecraft.deaths++, p) : p); saveUsers(l); return {ok:true}; },
   async importJson(list) {
+    if (!isAdmin()) throw new Error('Admin required');
     const norm = (list||[]).map(p => {
       if (p.games) return p;
       const g = defaultGames();
@@ -92,8 +129,9 @@ const api = {
   async exportJson() { return loadUsers(); }
 };
 
+// Helpers
 const fmtPercent = n => isNaN(n)?'-':(n*100).toFixed(0)+'%';
-const winRate = wl => { const t=(wl?.wins|0)+(wl?.losses|0); return t?((wl.wins|0)/t):0; };
-const kdRatio = kd => { const d=(kd?.deaths|0)||1; return (kd?.kills|0)/d; };
+const winRate = wl => { const t = (wl?.wins|0) + (wl?.losses|0); return t ? ((wl.wins|0) / t) : 0; };
+const kdRatio = kd => { const d = (kd?.deaths|0) || 1; return (kd?.kills|0) / d; };
 const diffRank = d => ({'Beginner':1,'Intermediate':2,'Expert':3}[d]||0);
 function escapeHtml(s){ return String(s??'').replace(/[&<>"]/g,''); }

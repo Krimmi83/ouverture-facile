@@ -12,6 +12,8 @@
         <a class="tab" href="leaderboard.html">Leaderboard</a>
         <a class="tab" href="players.html">The players</a>
         <a class="tab" href="about.html">About</a>
+        <span id="adminBadge" class="badge gray" style="margin-left:auto;">Admin: locked</span>
+        <button id="adminBtn" class="btn">Admin</button>
       </nav>
     </div>
   </header>
@@ -20,15 +22,10 @@
 
 <section class="card">
   <h1>Welcome to your multi-game hub</h1>
-  <p class="muted">Now supports stats per game: <b>Smash</b>, <b>Mario Kart</b>, <b>Démineur</b>, <b>Minecraft</b>.</p>
+  <p class="muted">Supports per-game stats: <b>Smash</b>, <b>Mario Kart</b>, <b>Démineur</b>, <b>Minecraft</b>. Admin lock protects edits.</p>
   <div class="toolbar">
     <a class="btn" href="leaderboard.html">Leaderboard</a>
     <a class="btn" href="players.html">Manage Players</a>
-  </div>
-  <div class="grid">
-    <div class="card"><h3>Local-first</h3><div class="muted">All data saved in localStorage.</div></div>
-    <div class="card"><h3>Import/Export</h3><div class="muted">Backup and restore JSON easily.</div></div>
-    <div class="card"><h3>Migrations</h3><div class="muted">Old single-game data auto-migrates to Smash.</div></div>
   </div>
 </section>
 

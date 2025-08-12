@@ -1,7 +1,10 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Game Hub — Players</title><link rel="stylesheet" href="assets/style.css"/></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Game Hub — Players</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
 <body>
 
   <header>
@@ -12,11 +15,13 @@
         <a class="tab" href="leaderboard.html">Leaderboard</a>
         <a class="tab active" href="players.html">The players</a>
         <a class="tab" href="about.html">About</a>
+        <button id="adminToggle" class="btn" title="Admin lock/unlock">🔒 Admin</button>
       </nav>
     </div>
   </header>
 
-<main class="container">
+  <main class="container">
+    
 <section class="card">
   <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
     <h2 style="margin:0">Players</h2>
@@ -24,17 +29,28 @@
       <input id="search" class="input" placeholder="Search username or email" />
       <button class="btn success" id="addDemo">Add demo data</button>
       <button class="btn" id="clearAll">Clear all</button>
+      <button class="btn" id="backupFolder">Sauvegarde → dossier “joueurs”</button>
     </div>
   </div>
   <div style="overflow:auto; margin-top:12px;">
-    <table id="plTable"><thead><tr>
-      <th>Id</th><th>Username</th><th>Wins</th><th>Losses</th><th>Email</th><th>Actions</th>
-    </tr></thead><tbody></tbody></table>
+    <table id="plTable">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Username</th>
+          <th>Wins</th>
+          <th>Losses</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
-  <hr style="border: none; border-top:1px solid rgba(148,163,184,.15); margin:16px 0;"/>
+  <hr style="border: none; border-top:1px solid rgba(148,163,184,0.15); margin:16px 0;"/>
   <h3 style="margin:0 0 8px">Add / Edit Player</h3>
   <form id="playerForm" class="grid" onsubmit="return false;">
-    <div class="card"><label class="muted">Id</label><input class="input" id="fId" type="number" min="1" placeholder="Auto if empty" /></div>
+    <div class="card"><label class="muted">Id</</label><input class="input" id="fId" type="number" min="1" placeholder="Auto if empty" /></div>
     <div class="card"><label class="muted">Username</label><input class="input" id="fUser" placeholder="e.g. pixel_fox" required /></div>
     <div class="card"><label class="muted">Wins</label><input class="input" id="fWins" type="number" min="0" value="0" required /></div>
     <div class="card"><label class="muted">Losses</label><input class="input" id="fLosses" type="number" min="0" value="0" required /></div>
@@ -45,8 +61,14 @@
     </div>
   </form>
 </section>
-</main>
-<footer><div class="container">Built with ❤️ — no frameworks, just modern HTML + JS.</div></footer>
-<script src="js/data.js"></script>
+
+  </main>
+  <footer>
+    <div class="container">Built with ❤️ — no frameworks, just modern HTML + JS. <span id="adminStatus" class="admin-badge" style="display:none">Admin</span></div>
+  </footer>
+  <script>window.ADMIN_PIN_SHA256="a1fb4e703a9ef1fa4936801721ff285a97ac85330856674412e054892afe6972";</script>
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
   <script src="js/players.js"></script>
-</body></html>
+</body>
+</html>

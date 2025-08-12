@@ -1,7 +1,10 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Game Hub — About</title><link rel="stylesheet" href="assets/style.css"/></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Game Hub — About</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
 <body>
 
   <header>
@@ -12,18 +15,26 @@
         <a class="tab" href="leaderboard.html">Leaderboard</a>
         <a class="tab" href="players.html">The players</a>
         <a class="tab active" href="about.html">About</a>
+        <button id="adminToggle" class="btn" title="Admin lock/unlock">🔒 Admin</button>
       </nav>
     </div>
   </header>
 
-<main class="container">
+  <main class="container">
+    
 <section class="card">
   <h2>About</h2>
-  <p class="muted">This is the static-only edition. Data is stored in your browser using <b>localStorage</b>. No backend required.</p>
-  <p class="muted">Fields: <b>Id</b>, <b>Username</b>, <b>Number of losses</b>, <b>Number of wins</b>, <b>Email</b>.</p>
+  <p class="muted">Static version with <b>read-only by default</b> + <b>Admin unlock by PIN</b>. PIN stored as SHA-256 hash; this is a light barrier (DevTools can always override in a static app).</p>
+  <p class="muted">To change the PIN, edit <code>js/auth.js</code> (constant <code>ADMIN_PIN_SHA256</code>).</p>
 </section>
-</main>
-<footer><div class="container">Built with ❤️ — no frameworks, just modern HTML + JS.</div></footer>
-<script src="js/data.js"></script>
 
-</body></html>
+  </main>
+  <footer>
+    <div class="container">Built with ❤️ — no frameworks, just modern HTML + JS. <span id="adminStatus" class="admin-badge" style="display:none">Admin</span></div>
+  </footer>
+  <script>window.ADMIN_PIN_SHA256="a1fb4e703a9ef1fa4936801721ff285a97ac85330856674412e054892afe6972";</script>
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
+
+</body>
+</html>

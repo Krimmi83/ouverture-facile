@@ -1,7 +1,10 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Game Hub — Leaderboard</title><link rel="stylesheet" href="assets/style.css"/></head>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Game Hub — Leaderboard</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
 <body>
 
   <header>
@@ -12,11 +15,13 @@
         <a class="tab active" href="leaderboard.html">Leaderboard</a>
         <a class="tab" href="players.html">The players</a>
         <a class="tab" href="about.html">About</a>
+        <button id="adminToggle" class="btn" title="Admin lock/unlock">🔒 Admin</button>
       </nav>
     </div>
   </header>
 
-<main class="container">
+  <main class="container">
+    
 <section class="card">
   <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
     <h2 style="margin:0">Leaderboard</h2>
@@ -29,18 +34,27 @@
         <option value="username">Username (A→Z)</option>
       </select>
       <button class="btn" id="lbExport">Export JSON</button>
-      <label class="btn warn" for="lbImportFile">Import JSON</label>
+      <label class="btn warn" for="lbImportFile" id="lbImportLabel">Import JSON</label>
       <input id="lbImportFile" type="file" accept="application/json" style="display:none"/>
     </div>
   </div>
   <div style="overflow:auto;">
-    <table id="lbTable"><thead><tr>
-      <th>#</th><th>Username</th><th>Wins</th><th>Losses</th><th>Win rate</th><th>Email</th>
-    </tr></thead><tbody></tbody></table>
+    <table id="lbTable">
+      <thead><tr>
+        <th>#</th><th>Username</th><th>Wins</th><th>Losses</th><th>Win rate</th><th>Email</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
   </div>
 </section>
-</main>
-<footer><div class="container">Built with ❤️ — no frameworks, just modern HTML + JS.</div></footer>
-<script src="js/data.js"></script>
+
+  </main>
+  <footer>
+    <div class="container">Built with ❤️ — no frameworks, just modern HTML + JS. <span id="adminStatus" class="admin-badge" style="display:none">Admin</span></div>
+  </footer>
+  <script>window.ADMIN_PIN_SHA256="a1fb4e703a9ef1fa4936801721ff285a97ac85330856674412e054892afe6972";</script>
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
   <script src="js/leaderboard.js"></script>
-</body></html>
+</body>
+</html>

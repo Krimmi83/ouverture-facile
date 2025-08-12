@@ -33,4 +33,4 @@ const api = {
 // Utils
 const fmtPercent = n => isNaN(n)?'-':(n*100).toFixed(0)+'%';
 const winRate = p => { const t=p.wins+p.losses; return t?(p.wins/t):0; };
-function escapeHtml(s){ return String(s).replace(/[&<>"]/g,''); }
+function escapeHtml(s){ return String(s).replace(/[&<>\"]/g,''); }

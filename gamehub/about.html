@@ -22,7 +22,18 @@
 
 <section class="card">
   <h2>About</h2>
-  <p class="muted">Static-only, multi-game edition, with per-game tabs and an Admin PIN lock (local only).</p>
+  <p class="muted">Emails supprimés. Données par joueur :</p>
+  <pre class="muted">
+{
+  id, username,
+  games: {
+    smash: { wins, losses },
+    mariokart: { wins, losses },
+    demineur: { difficulty, score },
+    minecraft: { kills, deaths }
+  }
+}
+  </pre>
 </section>
 
   </main>

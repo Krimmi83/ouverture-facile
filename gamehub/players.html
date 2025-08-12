@@ -28,7 +28,7 @@
       <button class="tab small" data-game="demineur">Démineur</button>
       <button class="tab small" data-game="minecraft">Minecraft</button>
     </nav>
-    <input id="search" class="input" placeholder="Search username or email"/>
+    <input id="search" class="input" placeholder="Search username"/>
     <button class="btn success" id="addDemo" data-admin-only>Add demo data</button>
     <button class="btn" id="clearAll" data-admin-only>Clear all</button>
     <button class="btn" id="backupFolder" data-admin-only>Sauvegarde → dossier “joueurs”</button>
@@ -44,7 +44,6 @@
   <form id="playerForm" class="grid" onsubmit="return false;" data-admin-only>
     <div class="card"><label class="muted">Id</label><input class="input" id="fId" type="number" min="1" placeholder="Auto if empty"/></div>
     <div class="card"><label class="muted">Username</label><input class="input" id="fUser" required/></div>
-    <div class="card"><label class="muted">Email</label><input class="input" id="fEmail" type="email" required/></div>
 
     <div class="card game-panel" data-game="smash"><h3>Smash</h3>
       <label class="muted">Wins</label><input class="input" id="fSmashWins" type="number" min="0" value="0"/>
